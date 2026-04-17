@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Renton WA Home Finder 2026</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════════════════ HERO ══ -->
+  <div class="hero">
+    <div class="hero-badge">2026 Market Data · King County, WA</div>
+    <h1>Find Your Perfect Home in<br /><span>Renton, Washington</span></h1>
+    <p>
+      Enter your financial profile and preferences to discover which Renton
+      neighborhoods and homes match your budget, lifestyle, and qualifications.
+    </p>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="num">$640K</div>
+        <div class="lbl">Median Sale Price</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">9</div>
+        <div class="lbl">Neighborhoods</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">13 days</div>
+        <div class="lbl">Avg. Days on Market</div>
+      </div>
+      <div class="stat-item">
+        <div class="num">6.5%</div>
+        <div class="lbl">Est. Mortgage Rate</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════ MAIN WRAP ══ -->
+  <div class="container">
+
+    <!-- ── Progress Bar ── -->
+    <div id="progressWrap" style="display:none">
+      <div class="progress-wrap">
+        <div class="progress-steps">
+          <div class="p-step" id="ps1">
+            <div class="p-dot">1</div>
+            <div class="p-label">Finances</div>
+          </div>
+          <div class="p-step" id="ps2">
+            <div class="p-dot">2</div>
+            <div class="p-label">Preferences</div>
+          </div>
+          <div class="p-step" id="ps3">
+            <div class="p-dot">3</div>
+            <div class="p-label">Lifestyle</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Saved Applications Panel ── -->
+    <div id="savedPanel" style="display:none">
+      <div class="saved-panel fade-in">
+        <div class="saved-panel-header">
+          <div>
+            <h3>Your Saved Applications</h3>
+            <p>Resume a previous profile or start a brand new search</p>
+          </div>
+          <button class="btn btn-secondary btn-sm" onclick="startFresh()">+ New Search</button>
+        </div>
+        <div class="saved-list" id="savedList"></div>
+        <div class="saved-footer">
+          <button class="badge-del" onclick="clearAllSaved()">Clear all saved applications</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ STEP 1 — Finances ══ -->
+    <div id="step1" style="display:none">
+      <div class="card fade-in">
+        <div class="card-title">Your Financial Profile</div>
+        <div class="card-subtitle">
+          We'll use this to calculate your maximum home price, monthly payment,
+          and loan eligibility using standard lender guidelines.
+        </div>
+
+        <div class="form-grid">
+
+          <!-- Annual Income -->
+          <div class="form-group full">
+            <label>Annual Gross Income <span class="hint">(before taxes)</span></label>
+            <div class="range-row">
+              <input
+                type="range" id="income"
+                min="40000" max="500000" step="5000" value="120000"
+                oninput="updateRange('income','incomeVal',fmt)"
+              />
+              <span class="range-val" id="incomeVal">$120,000</span>
+            </div>
+          </div>
+
+          <!-- Monthly Debts -->
+          <div class="form-group full">
+            <label>Monthly Existing Debts <span class="hint">(car, student loans, credit cards)</span></label>
+            <div class="range-row">
+              <input
+                type="range" id="debts"
+                min="0" max="5000" step="100" value="500"
+                oninput="updateRange('debts','debtsVal',fmt)"
+              />
+              <span class="range-val" id="debtsVal">$500</span>
+            </div>
+          </div>
+
+          <!-- Down Payment -->
+          <div class="form-group full">
+            <label>Saved for Down Payment</label>
+            <div class="range-row">
+              <input
+                type="range" id="down"
+                min="0" max="500000" step="5000" value="80000"
+                oninput="updateRange('down','downVal',fmt)"
+              />
+              <span class="range-val" id="downVal">$80,000</span>
+            </div>
+          </div>
+
+          <!-- Credit Score -->
+          <div class="form-group">
+            <label>Credit Score Range</label>
+            <select id="credit">
+              <option value="760">Excellent (760+)</option>
+              <option value="720">Very Good (720–759)</option>
+              <option value="680" selected>Good (680–719)</option>
+              <option value="640">Fair (640–679)</option>
+              <option value="620">Minimum Conventional (620–639)</option>
+              <option value="580">FHA Eligible (580–619)</option>
+              <option value="500">Below 580</option>
+            </select>
+          </div>
+
+          <!-- Employment Type -->
+          <div class="form-group">
+            <label>Employment Type</label>
+            <select id="employment">
+              <option value="w2" selected>W-2 Employee (salaried/hourly)</option>
+              <option value="self">Self-Employed / Business Owner</option>
+              <option value="gov">Government / Military</option>
+              <option value="retired">Retired / Fixed Income</option>
+              <option value="contract">Contract / 1099</option>
+            </select>
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <div class="btn-row end">
+          <button class="btn btn-primary" onclick="goStep(2)">Next: Home Preferences →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════ STEP 2 — Preferences ══ -->
+    <div id="step2" style="display:none">
+      <div class="card fade-in">
+        <div class="card-title">Home Preferences</div>
+        <div class="card-subtitle">
+          Tell us what kind of home you're looking for to narrow down the best neighborhoods.
+        </div>
+
+        <div class="form-grid">
+
+          <!-- Property Type -->
+          <div class="form-group full">
+            <label>Property Type <span class="hint">(select one)</span></label>
+            <div class="option-grid" id="propType">
+              <div class="option-btn radio selected" data-val="sfh" onclick="selectRadio(this,'propType')">
+                <div class="chk radio"><span class="chk-tick">✓</span></div>Single-Family Home
+              </div>
+              <div class="option-btn radio" data-val="condo" onclick="selectRadio(this,'propType')">
+                <div class="chk radio"><span class="chk-tick">✓</span></div>Condo / Townhome
+              </div>
+              <div class="option-btn radio" data-val="either" onclick="selectRadio(this,'propType')">
+                <div class="chk radio"><span class="chk-tick">✓</span></div>Open to Either
+              </div>
+            </div>
+          </div>
+
+          <!-- Bedrooms -->
+          <div class="form-group full">
+            <label>Minimum Bedrooms</label>
+            <div class="option-grid" id="beds">
+              <div class="option-btn radio" data-val="1" onclick="selectRadio(this,'beds')">
+                <div class="chk radio"><span class="chk-tick">✓</span></div>Studio / 1 Bed
+              </div>
+              <div class="option-btn radio selected" data-val="2" onclick="selectRadio(this,'beds')">
+                <div class="chk radio"><span class="chk-tick">✓</span></div>2–3 Bedrooms
+              </div>
+              <div class="option-btn radio" data-val="4" onclick="selectRadio(this,'beds')">
+                <div class="chk radio"><span class="chk-tick">✓</span></div>4+ Bedrooms
+              </div>
+            </div>
+          </div>
+
+          <!-- Priorities -->
+          <div class="form-group full">
+            <label>What matters most? <span class="hint">(select all that apply)</span></label>
+            <div class="option-grid" id="priorities">
+              <div class="option-btn" data-val="schools"     onclick="toggleCheck(this)"><div class="chk"><span class="chk-tick">✓</span></div>Top Schools</div>
+              <div class="option-btn" data-val="affordable"  onclick="toggleCheck(this)"><div class="chk"><span class="chk-tick">✓</span></div>Affordability</div>
+              <div class="option-btn" data-val="lakefront"   onclick="toggleCheck(this)"><div class="chk"><span class="chk-tick">✓</span></div>Lake Access</div>
+              <div class="option-btn" data-val="commute"     onclick="toggleCheck(this)"><div class="chk"><span class="chk-tick">✓</span></div>Easy Commute</div>
+              <div class="option-btn" data-val="nearSeattle" onclick="toggleCheck(this)"><div class="chk"><span class="chk-tick">✓</span></div>Near Seattle</div>
+              <div class="option-btn" data-val="quiet"       onclick="toggleCheck(this)"><div class="chk"><span class="chk-tick">✓</span></div>Quiet/Suburban</div>
+              <div class="option-btn" data-val="views"       onclick="toggleCheck(this)"><div class="chk"><span class="chk-tick">✓</span></div>Views</div>
+              <div class="option-btn" data-val="safety"      onclick="toggleCheck(this)"><div class="chk"><span class="chk-tick">✓</span></div>Low Crime</div>
+              <div class="option-btn" data-val="nature"      onclick="toggleCheck(this)"><div class="chk"><span class="chk-tick">✓</span></div>Parks &amp; Nature</div>
+            </div>
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(1)">← Back</button>
+          <button class="btn btn-primary"   onclick="goStep(3)">Next: Lifestyle →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════ STEP 3 — Lifestyle ══ -->
+    <div id="step3" style="display:none">
+      <div class="card fade-in">
+        <div class="card-title">Your Lifestyle &amp; Household</div>
+        <div class="card-subtitle">
+          A few final details to personalize your results and match you with the right loan programs.
+        </div>
+
+        <div class="form-grid">
+
+          <!-- Occupation -->
+          <div class="form-group">
+            <label>Occupation / Industry</label>
+            <select id="occupation">
+              <option value="tech">Technology / Engineering</option>
+              <option value="healthcare">Healthcare / Medical</option>
+              <option value="finance">Finance / Business</option>
+              <option value="education">Education</option>
+              <option value="gov">Government / Military</option>
+              <option value="trades">Trades / Construction</option>
+              <option value="retail">Retail / Service</option>
+              <option value="creative">Creative / Media</option>
+              <option value="other" selected>Other</option>
+            </select>
+          </div>
+
+          <!-- Household Size -->
+          <div class="form-group">
+            <label>Household Size</label>
+            <select id="household">
+              <option value="1">Just me (1 person)</option>
+              <option value="2" selected>2 people</option>
+              <option value="3">3 people</option>
+              <option value="4">4 people</option>
+              <option value="5">5+ people</option>
+            </select>
+          </div>
+
+          <!-- First-Time Buyer -->
+          <div class="form-group full">
+            <label>First-Time Homebuyer?</label>
+            <div class="option-grid" id="firstTime">
+              <div class="option-btn radio selected" data-val="yes" onclick="selectRadio(this,'firstTime')">
+                <div class="chk radio"><span class="chk-tick">✓</span></div>Yes — first time
+              </div>
+              <div class="option-btn radio" data-val="no" onclick="selectRadio(this,'firstTime')">
+                <div class="chk radio"><span class="chk-tick">✓</span></div>No — I've owned before
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline -->
+          <div class="form-group full">
+            <label>Timeline to Buy</label>
+            <div class="option-grid" id="timeline">
+              <div class="option-btn radio selected" data-val="asap"      onclick="selectRadio(this,'timeline')"><div class="chk radio"><span class="chk-tick">✓</span></div>As soon as possible</div>
+              <div class="option-btn radio"          data-val="6mo"       onclick="selectRadio(this,'timeline')"><div class="chk radio"><span class="chk-tick">✓</span></div>Within 6 months</div>
+              <div class="option-btn radio"          data-val="1yr"       onclick="selectRadio(this,'timeline')"><div class="chk radio"><span class="chk-tick">✓</span></div>Within 1 year</div>
+              <div class="option-btn radio"          data-val="exploring" onclick="selectRadio(this,'timeline')"><div class="chk radio"><span class="chk-tick">✓</span></div>Just exploring</div>
+            </div>
+          </div>
+
+        </div><!-- /form-grid -->
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="goStep(2)">← Back</button>
+          <button class="btn btn-primary"   onclick="showResults()">Find My Matches →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════ RESULTS ══ -->
+    <div id="results">
+
+      <div class="results-top-bar">
+        <button class="btn-ghost" onclick="showRestartOptions()">← Start Over</button>
+        <span class="app-label" id="appLabel"></span>
+      </div>
+
+      <div class="results-header">
+        <h2>Your Home Finder Results</h2>
+        <p id="resultsSubtitle">Based on your financial profile and preferences, here's what Renton has for you.</p>
+      </div>
+
+      <!-- Summary metrics -->
+      <div class="summary-strip" id="summaryCards"></div>
+
+      <!-- Eligibility check -->
+      <div class="elig-card">
+        <h3>📋 Loan Eligibility Check</h3>
+        <div class="elig-items" id="eligItems"></div>
+      </div>
+
+      <!-- Monthly breakdown -->
+      <div class="afford-card">
+        <div class="section-title" style="margin-bottom:16px">Monthly Budget Breakdown</div>
+        <div id="affordRows"></div>
+      </div>
+
+      <!-- Neighborhood matches -->
+      <div class="section-title">Neighborhood Matches</div>
+      <div class="nh-cards" id="nhCards"></div>
+
+      <!-- Tips -->
+      <div class="tips-card" id="tipsCard"></div>
+
+      <!-- Disclaimer -->
+      <div class="disclaimer">
+        <strong>Disclaimer:</strong> This tool provides estimates for informational purposes only
+        and is not financial or mortgage advice. All prices reflect publicly available 2026 market
+        data from Redfin, Zillow, Houzeo, and Homes.com. Actual mortgage rates, loan eligibility,
+        and home prices vary. Please consult a licensed mortgage professional and real estate agent
+        before making any purchasing decisions.
+      </div>
+
+    </div><!-- /#results -->
+
+  </div><!-- /.container -->
+
+  <!-- JavaScript -->
+  <script src="script.js"></script>
+
+</body>
+</html>
